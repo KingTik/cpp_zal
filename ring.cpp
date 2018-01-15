@@ -33,6 +33,17 @@ public:
         return this->_array.end();
     }
 
+    auto rbegin(){
+        return this->_array.rbegin();
+    }
+
+    auto rend(){
+        return this->_array.rend();
+    }
+
+    
+
+
     void display(){
         for(auto elem: this->_array){
             std::cout << elem << ", ";
