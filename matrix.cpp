@@ -48,6 +48,20 @@ public:
         return result;
      }
 
+    template <size_t p>
+    auto operator*(Matrix<T, Y ,p > m2){
+        Matrix<T, X, p> result;
+
+    for(int i = 0; i < X; ++i){
+            for(int j = 0; j < p; ++j){
+                for(int k = 0; k < Y; ++k)
+                {
+                    result[i][j] += this->_matrix[i][k] * m2[k][j];
+                }
+            }
+    }
+    return result;
+    }
 };
 
 
@@ -61,7 +75,7 @@ int main(){
 
     Matrix<int, 4,4> m3 = m1 - m2;
 
-    Matrix<int, 4,4> m4;
+    auto m4 = m1*m2;
 
     m4.display();
 
