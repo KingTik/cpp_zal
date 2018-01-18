@@ -10,12 +10,32 @@ class twSmartPointer{
     public:
     twSmartPointer(){
         pointer = new T();
-        *pointer = 10;
+        
+    }
+
+    twSmartPointer(const twSmartPointer<T>& o) = delete;
+    twSmartPointer(const twSmartPointer<T>&& o) {
+        this->pointer = o.get();
+        *(this->pointer) = *o;
+        o.reset();
     }
 
     ~twSmartPointer(){
         
+        this->reset();
+    }
+
+    void reset(){
         delete [] pointer;
+        pointer = nullptr;
+    }
+
+    twSmartPointer<T>& operator=(twSmartPointer<T>&& o){
+        this->reset();
+        this->pointer = o.get();
+        *(this->pointer) = *o;
+        o.reset();
+
     }
 
     auto get() const{
@@ -26,7 +46,7 @@ class twSmartPointer{
         return get();
     }
 
-    auto& operator*(){
+    auto& operator*() const{
         return *pointer;
     }
 };
@@ -39,6 +59,26 @@ bool operator==(const twSmartPointer<T>& left, const twSmartPointer<T>& right){
 template <typename T>
 bool operator!=(const twSmartPointer<T>& left, const twSmartPointer<T>& right){
     return left.get() != right.get();
+}
+
+template <typename T>
+bool operator>(const twSmartPointer<T>& left, const twSmartPointer<T>& right){
+    return left.get() > right.get();
+}
+
+template <typename T>
+bool operator>=(const twSmartPointer<T>& left, const twSmartPointer<T>& right){
+    return left.get() >= right.get();
+}
+
+template <typename T>
+bool operator<(const twSmartPointer<T>& left, const twSmartPointer<T>& right){
+    return left.get() < right.get();
+}
+
+template <typename T>
+bool operator<=(const twSmartPointer<T>& left, const twSmartPointer<T>& right){
+    return left.get() <= right.get();
 }
 
 int main(){
