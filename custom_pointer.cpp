@@ -1,5 +1,6 @@
 #include <iostream>
-
+#include <algorithm>
+#include <utility>
 
 
 template <typename T>
@@ -14,31 +15,52 @@ class twSmartPointer{
     }
 
     twSmartPointer(const twSmartPointer<T>& o) = delete;
-    twSmartPointer(const twSmartPointer<T>&& o) {
+    twSmartPointer(twSmartPointer<T>&& o) {
+        std::cout << "move constructor" << std::endl;
+        
         this->pointer = o.get();
-        *(this->pointer) = *o;
-        o.reset();
+        if(o.get() != nullptr){
+            *(this->pointer) = *o;
+            o.soft_reset();
+        }
+    }
+
+
+
+
+    // twSmartPointer<T>& operator=(twSmartPointer<T>& o) = delete;
+    // twSmartPointer<T>& operator=(twSmartPointer<T> o) = delete;
+    twSmartPointer<T>& operator=(twSmartPointer<T>&& o){
+        std::cout << "move assign" << std::endl;
+        this->reset();
+        this->pointer = o.get();
+        if(o.get() != nullptr){
+            *(this->pointer) = *o;
+            o.soft_reset();
+        }
     }
 
     ~twSmartPointer(){
-        
-        this->reset();
+        if(this->pointer != nullptr){
+            this->reset();
+        }
     }
+
 
     void reset(){
         delete [] pointer;
         pointer = nullptr;
     }
 
-    twSmartPointer<T>& operator=(twSmartPointer<T>&& o){
-        this->reset();
-        this->pointer = o.get();
-        *(this->pointer) = *o;
-        o.reset();
-
+    void swap(twSmartPointer<T>& o){
+        std::swap(this->pointer, o.get());
     }
 
-    auto get() const{
+    void soft_reset(){
+        this->pointer = nullptr;
+    }
+
+    auto& get(){
         return pointer;
     }
 
@@ -47,7 +69,11 @@ class twSmartPointer{
     }
 
     auto& operator*() const{
-        return *pointer;
+        if(this->pointer != nullptr){
+            return *pointer;
+        }else{
+            throw;
+        }
     }
 };
 
@@ -81,18 +107,40 @@ bool operator<=(const twSmartPointer<T>& left, const twSmartPointer<T>& right){
     return left.get() <= right.get();
 }
 
+
+auto foo(){
+    twSmartPointer<int> ppp;
+    *ppp = 14;
+    return ppp;
+}
+
+
 int main(){
     
     twSmartPointer<int> pointer;
-    twSmartPointer<int> pointer2;
     std::cout << *pointer <<std::endl;
     *pointer = 11;
     std::cout << *pointer <<std::endl;
+    
+    twSmartPointer<int> pointer2;
+    pointer2 = std::move(pointer);
+    std::cout << *pointer2 <<std::endl;
 
 
-    if(pointer != pointer){
-        std::cout << "Equal" <<std::endl;
-    }else{
-        std::cout << "Not Equal" <<std::endl;
-    }
+    twSmartPointer<int> pointer3 = std::move(pointer2);
+    std::cout << *pointer3 <<std::endl;
+
+    twSmartPointer<int> pointer4;
+    
+    
+    *pointer4 = 100;
+    std::cout << "Swapping" <<std::endl;
+    std::cout << "pointer3: " << *pointer3 <<std::endl;
+    std::cout << "pointer4: " << *pointer4 <<std::endl;
+    std::cout << "BAM" <<std::endl;
+    pointer4.swap(pointer3);
+    std::cout << "pointer3: " << *pointer3 <<std::endl;
+    std::cout << "pointer4: " << *pointer4 <<std::endl;
+    
+
 }
