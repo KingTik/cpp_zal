@@ -101,6 +101,7 @@ class twSmartPointer{
 
     void swap(twSmartPointer<T>& o){
         std::swap(this->pointer, o.get());
+        std::swap(this->_counter, o._counter);
     }
 
     void soft_reset(){
