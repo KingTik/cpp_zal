@@ -13,6 +13,9 @@ struct Counter{
         _cnt--;
     }
 
+    void reset(){
+        _cnt = 0;
+    }
     void inc(){
         _cnt++;
     }
@@ -22,9 +25,6 @@ struct Counter{
 
 template <typename T>
 class twSmartPointer{
-
-    
-    
 
     public:
     T* pointer;
@@ -49,6 +49,7 @@ class twSmartPointer{
         this->pointer = o.get();
         if(o.get() != nullptr){
             *(this->pointer) = *o;
+            this->_counter = o._counter;
             o.soft_reset();
         }
     }
@@ -56,7 +57,14 @@ class twSmartPointer{
 
 
 
-    twSmartPointer<T>& operator=(twSmartPointer<T>& o) = delete;
+    twSmartPointer<T>& operator=(twSmartPointer<T>& o) {
+        std::cout << "assign operator";
+        this->reset();
+        this->_counter = o._counter;
+        this->pointer = o.pointer;
+        this->_counter->inc();
+        //to do
+    }
     
     twSmartPointer<T>& operator=(twSmartPointer<T>&& o){
         std::cout << "move assign" << std::endl;
@@ -82,9 +90,13 @@ class twSmartPointer{
 
 
     void reset(){
-        std::cout << "deleting" <<std::endl;
-        delete [] pointer;
-        pointer = nullptr;
+        
+        if(pointer != nullptr){
+            std::cout << "deleting" <<std::endl;
+            delete [] pointer;
+            _counter->reset();
+            pointer = nullptr;
+        }
     }
 
     void swap(twSmartPointer<T>& o){
@@ -92,6 +104,7 @@ class twSmartPointer{
     }
 
     void soft_reset(){
+        _counter->reset();
         this->pointer = nullptr;
     }
 
@@ -161,6 +174,11 @@ int main(){
         twSmartPointer<int> pointer3(pointer);
         std::cout << pointer._counter->get() <<std::endl;
     }
+    std::cout << pointer._counter->get() <<std::endl;
+
+
+    twSmartPointer<int> pointer4;
+    pointer4 = pointer2;
     std::cout << pointer._counter->get() <<std::endl;
     // std::cout << *(pointer2._counter) <<std::endl;
 
