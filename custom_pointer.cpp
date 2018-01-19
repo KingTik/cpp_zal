@@ -28,8 +28,8 @@ class twSmartPointer{
 
 
 
-    // twSmartPointer<T>& operator=(twSmartPointer<T>& o) = delete;
-    // twSmartPointer<T>& operator=(twSmartPointer<T> o) = delete;
+    twSmartPointer<T>& operator=(twSmartPointer<T>& o) = delete;
+    
     twSmartPointer<T>& operator=(twSmartPointer<T>&& o){
         std::cout << "move assign" << std::endl;
         this->reset();
