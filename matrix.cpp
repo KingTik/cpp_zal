@@ -49,7 +49,7 @@ public:
      }
 
     template <size_t p>
-    auto operator*(Matrix<T, Y ,p > m2){
+    auto operator*(const Matrix<T, Y ,p > m2){
         Matrix<T, X, p> result;
 
     for(int i = 0; i < X; ++i){
@@ -62,9 +62,49 @@ public:
     }
     return result;
     }
-};
 
 
+    auto operator*(const int scalar){
+        Matrix<T, X, Y> result;
+        
+        for(int i = 0; i < X ; i++){
+            for(int j = 0; j< Y; j++ ){
+                result[i][j] = this->_matrix[i][j] * scalar;
+            }
+        }
+        return result;
+        
+    }
+
+
+    auto operator+(const int scalar){
+        Matrix<T, X, Y> result;
+        
+        for(int i = 0; i < X ; i++){
+            for(int j = 0; j< Y; j++ ){
+                result[i][j] = this->_matrix[i][j] + scalar;
+            }
+        }
+        return result;
+    }
+
+
+
+}; //END OF MATRIX
+
+//global operator overload
+template <typename T, size_t X, size_t Y>
+auto operator*( int scalar,Matrix<T,X ,Y> &M){
+    
+    return M * scalar;
+} 
+
+//glonal overload for +
+template <typename T, size_t X, size_t Y>
+auto operator+( int scalar,Matrix<T,X ,Y> &M){
+
+    return M + scalar;
+} 
 
 
 int main(){
@@ -73,10 +113,10 @@ int main(){
     Matrix<int, 4,4> m1 = ( std::array<std::array<int, 4>, 4>) { {{-1,-2,-3,-4}, {-11,-12,-13,-14}, {-21,-22,-23,-24}, {-31,-32,-33,-34}} };
     Matrix<int, 4,4> m2 = ( std::array<std::array<int, 4>, 4>) { {{-1,-2,-3,-4}, {-11,-12,-13,-14}, {-21,-22,-23,-24}, {-31,-32,-33,-34}} };
 
-    Matrix<int, 4,4> m3 = m1 - m2;
+    Matrix<int, 4,4> m3 = 3+ m1 ;
 
-    auto m4 = m1*m2;
+    // auto m4 = m1*m2;
 
-    m4.display();
+    m3.display();
 
 }
