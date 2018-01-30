@@ -1,6 +1,7 @@
 #include <iostream>
 #include <array>
 #include <cstring>
+#include <algorithm>
 
 template <typename T, size_t N>
 class RingBuffer{
@@ -14,15 +15,25 @@ public:
     }
 
     void push(T data){
+        // this code below was before our last lesson so no std::rotate
+        // if( this->_cursor < N){
+        //     this->_array[this->_cursor] = data;
+        //     this->_cursor++;
+        // }else{
+        //     std::memmove(this->_array.data(), (this->_array.data()+1), (N-1)*sizeof(T));
+        //     this->_array[N-1] = data;
+        // }
 
+        
+         
         if( this->_cursor < N){
             this->_array[this->_cursor] = data;
             this->_cursor++;
         }else{
-            std::memmove(this->_array.data(), (this->_array.data()+1), (N-1)*sizeof(T));
+            std::rotate(this->_array.begin(), this->_array.begin()+1, this->_array.end());
             this->_array[N-1] = data;
         }
-
+        
     }
 
     auto begin(){
@@ -40,9 +51,6 @@ public:
     auto rend(){
         return this->_array.rend();
     }
-
-    
-
 
     void display(){
         for(auto elem: this->_array){
