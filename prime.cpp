@@ -12,6 +12,49 @@
 #include <thread>
 #include <iomanip>
 #include <memory>
+#include <iterator>
+#include <fstream>
+#include <algorithm> // WINCYJ INKLUDUW
+
+class GenerateData{
+
+    std::string filePath = "data.txt";
+    std::ofstream file;
+public:
+    void generate_to_file(const int &howManyNumbers){
+        file.open(this->filePath); 
+        long i = 1;
+
+        std::ostream_iterator<long> out_it (file," ");
+        std::generate_n(out_it, howManyNumbers, [&i]()mutable{return i++;});
+
+        file.close();
+    }
+
+    std::vector<long> read_from_file(const int &generateHowMany){
+
+        std::vector<long> data;
+        std::ifstream file_temp(this->filePath);
+        std::istream_iterator<long> in_it (file_temp);
+        
+        std::generate_n(std::back_inserter(data), generateHowMany, [&in_it](){
+            
+            
+            auto reading = *in_it;
+            
+            ++in_it;
+            return reading;
+
+        }); 
+
+        file_temp.close();
+
+        return data;
+    }
+
+};
+
+
 
 
 class PrimeCheckerIF{
@@ -125,6 +168,12 @@ class MillerRabin: public PrimeCheckerIF{
 
 
 int main(){
+
+    GenerateData generator1;
+    // generator1.generate_to_file(10000);
+
+    int DataSetSize = 10000;
+    std::vector<long> vec = generator1.read_from_file(DataSetSize);
     std::srand(std::time(nullptr)); //dem random numbers
     int cnt = 0;
     int NUMBER_OF_THEADS = 4; // <--- NUMBER OF THREADS
@@ -138,7 +187,7 @@ int main(){
     MillerRabin mira;
 
     std::vector<PrimeCheckerIF*> algorithms = { &tridv, &mira };
-    std::set<long> data = { 16, 233, 239, 241,899,200, 251, 257, 263, 269,100, 1020 ,271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 516,337, 347, 349, 353, 359, 367,795, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, };
+    std::vector<long> data = generator1.read_from_file(DataSetSize);
     auto vec_size = data.size();
     auto current_number = data.begin(); // using iterator to keep track of current number to process
 
