@@ -14,7 +14,7 @@
 #include <memory>
 #include <iterator>
 #include <fstream>
-#include <algorithm> // WINCYJ INKLUDUW
+#include <algorithm> // WINCYJ INKLUDUF
 
 class GenerateData{
 
@@ -177,9 +177,9 @@ int main(){
     std::srand(std::time(nullptr)); //dem random numbers
     int cnt = 0;
     int NUMBER_OF_THEADS = 4; // <--- NUMBER OF THREADS
-    std::set<long> prime_numbers;
-    std::set<long> not_prime_numbers;
-    std::future<std::pair<long,bool>> allFutures[NUMBER_OF_THEADS];
+    std::set<long> prime_numbers; //set where i push prime numbers
+    std::set<long> not_prime_numbers; //set where i push the rest
+    std::future<std::pair<long,bool>> allFutures[NUMBER_OF_THEADS]; 
     std::mutex _lock;
 
     
@@ -193,7 +193,7 @@ int main(){
 
     for(auto alg:algorithms ){ //looping over every algorithm
         auto start = std::chrono::system_clock::now();
-        //start first threads, without that the 'wait_for' future condition in while loop never will be met 
+        //start first threads; without that the 'wait_for' future condition in while loop (couple lines below) never will be met 
         for(int i=0; i<NUMBER_OF_THEADS; i++){
             allFutures[i] = std::async(std::launch::async, PrimeCheckerIF::check_prime_thread, alg, *current_number);
             // arr.pop_back();
@@ -220,7 +220,7 @@ int main(){
                         _lock.unlock();
                     }
                 }catch(const std::future_error& e){
-                    //why bother
+                    //¯\_(ツ)_/¯ 
                 }
             }
         }
